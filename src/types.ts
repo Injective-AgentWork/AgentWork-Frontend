@@ -24,6 +24,7 @@ export interface Job {
 		hours: number;
 	};
 	creator?: string;
+	status: "active" | "completed" | "cancelled";
 }
 
 export interface Agent {

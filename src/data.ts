@@ -35,6 +35,7 @@ export const jobs: Job[] = [
 			hours: 0,
 		},
 		creator: "inj1z0ax5ypjskzhcsxhdz6sh5twvjdc6e4ta4f3rq",
+		status: "active",
 	},
 ];
 
