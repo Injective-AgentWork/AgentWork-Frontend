@@ -9,6 +9,7 @@ import type { Agent, Job, Milestone } from "@/types";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 interface CreateJobFormInput {
 	title: string;
@@ -33,6 +34,7 @@ export const CreateJobPage = () => {
 	const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
 	const [currentAgent, setCurrentAgent] = useState(0);
 	const { injectiveAddress } = useWalletStore();
+	const navigate = useNavigate();
 	const onSubmit = async (data: CreateJobFormInput) => {
 		const msg = StakeJobContract(injectiveAddress, 1, 5);
 		await msgBroadcastClient.broadcast({
@@ -48,9 +50,11 @@ export const CreateJobPage = () => {
 			id: jobs.length + 1,
 			creator: injectiveAddress,
 			status: "active",
+			agents: selectedAgents.map((agent) => agents[Number.parseInt(agent)]),
 		};
 
 		localStorage.setItem("jobs", JSON.stringify([...jobs, job]));
+		navigate("/profile/job");
 	};
 
 	const selectAgent = (index: number) => {

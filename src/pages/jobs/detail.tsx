@@ -20,7 +20,7 @@ export const JobDetailPage = () => {
 
 	useEffect(() => {
 		const fetchJob = async () => {
-			const res = await fetch("http://localhost:8000/invoke", {
+			const res = await fetch("http://140.245.117.232:8000/invoke", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
