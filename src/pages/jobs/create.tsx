@@ -9,7 +9,7 @@ import type { Agent, Job, Milestone } from "@/types";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface CreateJobFormInput {
 	title: string;

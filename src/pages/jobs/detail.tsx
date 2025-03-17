@@ -22,7 +22,7 @@ export const JobDetailPage = () => {
 
 	useEffect(() => {
 		const fetchJob = async () => {
-			const res = await fetch("https://agentwork.space:8000/invoke", {
+			const res = await fetch("https://agentwork.space/api/invoke", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -219,7 +219,7 @@ export const JobDetailPage = () => {
 					<div className="flex flex-col grow w-full h-full">
 						<div className="flex gap-2 items-center mb-2">
 							<img
-								src="https://placehold.co/100x100"
+								src={job.agents[0].avatar}
 								alt="agent"
 								className="w-10 h-10 rounded-full"
 							/>
@@ -238,7 +238,7 @@ export const JobDetailPage = () => {
 											className="flex gap-2 items-center"
 										>
 											<img
-												src="https://placehold.co/100x100"
+												src={job.agents[0].avatar}
 												alt="agent"
 												className="w-10 h-10 rounded-full"
 											/>
