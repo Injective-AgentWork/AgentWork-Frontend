@@ -1,39 +1,44 @@
-import { AgentDetail } from "@/components/AgentDetail";
 import { Tag } from "@/components/Tag";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { Job } from "@/types";
+import type { Job, User } from "@/types";
 import { HandCoins } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useWalletStore } from "@/context/WalletContextProvider";
+import { ApproveJobContract } from "@/services/contracts";
+import { msgBroadcastClient } from "@/services/wallet";
 
 export const JobDetailPage = () => {
 	const [messages, setMessages] = useState<{ role: string; content: string }[]>(
 		[],
 	);
+	const { injectiveAddress } = useWalletStore();
 	const [activeMilestone, setActiveMilestone] = useState<number>(0);
 	const [isCompleted, setIsCompleted] = useState<boolean>(false);
+	const [message, setMessage] = useState<string>("");
 	const id = useParams<{ id: string }>().id;
 	const job: Job = JSON.parse(localStorage.getItem("jobs") || "[]").find(
 		(j: Job) => j.id === Number.parseInt(id!),
 	);
+	const users = JSON.parse(localStorage.getItem("users") || "[]");
+	const user = users.find((u: User) => u.id === injectiveAddress);
 
 	useEffect(() => {
 		const fetchJob = async () => {
-			const res = await fetch("https://agentwork.space/api/invoke", {
+			await fetch("https://agentwork.space/api/invoke", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					id: id,
+					id: "1",
 					request: job.description,
+					id_thread: job.id.toString(),
 				}),
 			});
-			const data = await res.json();
-			setMessages(data.output[1].messages);
 			setIsCompleted(true);
 		};
 
@@ -47,8 +52,19 @@ export const JobDetailPage = () => {
 			const interval = setInterval(() => {
 				setActiveMilestone((prev) => {
 					if (prev === job.milestones.length - 1) {
+						clearInterval(interval);
 						return prev;
 					}
+
+					setMessages((pr) => {
+						return [
+							...pr,
+							{
+								role: "assistant",
+								content: `We are moving to the next milestone: ${job.milestones[prev + 1].name}`,
+							},
+						];
+					});
 					return prev + 1;
 				});
 			}, 5000);
@@ -57,7 +73,60 @@ export const JobDetailPage = () => {
 		}
 		setActiveMilestone(job.milestones.length - 1);
 		setIsCompleted(true);
-	}, [job.milestones, job.status]);
+	}, [job.status]);
+
+	useEffect(() => {
+		if (isCompleted) {
+			setMessages((prev) => {
+				return [
+					...prev,
+					{
+						role: "assistant",
+						content:
+							"All milestones are completed, please check the output for the final result. Feel free to contact the agent team for any questions.",
+					},
+				];
+			});
+		}
+	}, [isCompleted]);
+
+	const handleSendMessage = async (message: string) => {
+		setMessages((prev) => {
+			return [...prev, { role: "user", content: message }];
+		});
+		setMessage("");
+		const res = await fetch("https://agentwork.space/api/invoke", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				id: "1",
+				request: message,
+				id_thread: job.id.toString(),
+			}),
+		});
+		const data = await res.json();
+		console.log(data);
+		setMessages((prev) => {
+			return [
+				...prev,
+				{ role: "assistant", content: data.output[1].messages[1]?.content },
+			];
+		});
+	};
+
+	const handleApprove = async () => {
+		const msg = ApproveJobContract(injectiveAddress, job.id);
+		await msgBroadcastClient.broadcast({
+			msgs: msg!,
+			injectiveAddress: injectiveAddress,
+		});
+		const jobs = JSON.parse(localStorage.getItem("jobs") || "[]") as Job[];
+		const jobIndex = jobs.findIndex((j) => j.id === job.id);
+		jobs[jobIndex].status = "completed";
+		localStorage.setItem("jobs", JSON.stringify(jobs));
+	};
 
 	if (!job) {
 		return (
@@ -200,7 +269,12 @@ export const JobDetailPage = () => {
 								<Button className="border border-[#AFFF01] rounded-full px-8 text-[#AFFF01] bg-transparent hover:bg-transparent">
 									Disappoint
 								</Button>
-								<Button className="rounded-full px-8 bg-[#AFFF01] text-black hover:bg-[#AFFF01]">
+								<Button
+									className="rounded-full px-8 bg-[#AFFF01] text-black hover:bg-[#AFFF01]"
+									onClick={() => {
+										handleApprove();
+									}}
+								>
 									Approve
 								</Button>
 							</>
@@ -235,10 +309,16 @@ export const JobDetailPage = () => {
 									return (
 										<div
 											key={message.content}
-											className="flex gap-2 items-center"
+											className={cn("flex gap-2 items-center", {
+												"flex-row-reverse": message.role === "user",
+											})}
 										>
 											<img
-												src={job.agents[0].avatar}
+												src={
+													message.role === "user"
+														? user.avatar
+														: job.agents[0].avatar
+												}
 												alt="agent"
 												className="w-10 h-10 rounded-full"
 											/>
@@ -252,9 +332,23 @@ export const JobDetailPage = () => {
 									);
 								})}
 							</div>
-							<div className="flex gap-2">
-								<Input placeholder="Message" />
-								<Button>Send</Button>
+							<div className="flex gap-2 sticky bottom-0 mt-4 bg-white">
+								<Input
+									placeholder={
+										isCompleted
+											? "Message"
+											: "Please wait for the job to be completed"
+									}
+									disabled={!isCompleted}
+									onChange={(e) => setMessage(e.target.value)}
+									value={message}
+								/>
+								<Button
+									disabled={!isCompleted}
+									onClick={() => handleSendMessage(message)}
+								>
+									Send
+								</Button>
 							</div>
 						</div>
 					</div>
