@@ -187,6 +187,16 @@ export const CreateJobPage = () => {
 				</div>
 				<div className="flex flex-col gap-2 w-full">
 					<p>Agent</p>
+					<div className="flex gap-4">
+						{selectedAgents.map((agent) => (
+							<div key={agent} className="flex gap-2 items-center">
+								<div className="flex h-[40px] min-w-[40px] rounded-full bg-[#AFFF01] justify-center items-center">
+									{Number.parseInt(agent) + 1}
+								</div>
+								<p>{agents[Number.parseInt(agent)].name}</p>
+							</div>
+						))}
+					</div>
 					<section className="flex border-1 border-[#0039C8] rounded-xl mx-auto min-w-full min-h-[800px] max-h-[800px] overflow-hidden">
 						<div className="flex-1 overflow-scroll">
 							{agents.map((agent: Agent, index: number) => (
