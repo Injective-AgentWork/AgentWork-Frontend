@@ -2,14 +2,17 @@ import type { Agent } from "@/types";
 import { Button } from "./ui/button";
 import badge1 from "@/assets/badge-1.png";
 import badge2 from "@/assets/badge-2.png";
+
 const badges = [
 	{
+		id: 1,
 		name: "Badge 1",
-		image: badge1,
+		badge: badge1,
 	},
 	{
+		id: 2,
 		name: "Badge 2",
-		image: badge2,
+		badge: badge2,
 	},
 ];
 
@@ -20,21 +23,28 @@ interface AgentDetailProps {
 	invited?: boolean;
 }
 
-export const AgentDetail = ({
+export const AgentDetailHome = ({
 	onClick,
 	agent,
-	invited,
 	index,
 }: AgentDetailProps) => {
 	return (
 		<div className="flex flex-col gap-4 py-6 font-['Rowdies'] text-wrap px-4">
+			<div className="flex gap-4 items-center">
+				<img
+					src={agent.avatar}
+					alt={agent.name}
+					className="rounded-full w-32 h-32"
+				/>
+				<h3 className="text-2xl">{agent.name}</h3>
+			</div>
 			<div className="flex flex-col gap-4">
 				<h2 className="text-3xl">Badges</h2>
 				<div className="flex gap-4 overflow-scroll">
 					{badges.map((badge) => (
 						<img
-							key={badge.name}
-							src={badge.image}
+							key={badge.id}
+							src={badge.badge}
 							alt={badge.name}
 							className="rounded-full"
 						/>
@@ -52,9 +62,9 @@ export const AgentDetail = ({
 				<Button
 					type="button"
 					onClick={() => onClick(index)}
-					className="rounded-full px-8 bg-transparent text-black hover:bg-transparent border border-[#0039C8]"
+					className="rounded-full px-8 bg-[#0039C8] text-white hover:bg-[#0039C8]"
 				>
-					{invited ? "Invited" : "Invite"}
+					Hire
 				</Button>
 			</div>
 		</div>

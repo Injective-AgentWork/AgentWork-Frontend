@@ -9,7 +9,7 @@ import type { Agent, Job, Milestone } from "@/types";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 interface CreateJobFormInput {
 	title: string;
@@ -30,9 +30,12 @@ interface CreateJobFormInput {
 
 export const CreateJobPage = () => {
 	const { register, handleSubmit } = useForm<CreateJobFormInput>();
+	const params = useLocation().search.split("?")[1]?.split("=")[1];
 	const [milestones, setMilestones] = useState<Milestone[]>([]);
 	const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
-	const [currentAgent, setCurrentAgent] = useState(0);
+	const [currentAgent, setCurrentAgent] = useState<number>(
+		Number.parseInt(params ?? "0"),
+	);
 	const { injectiveAddress } = useWalletStore();
 	const navigate = useNavigate();
 	const onSubmit = async (data: CreateJobFormInput) => {
@@ -183,11 +186,15 @@ export const CreateJobPage = () => {
 					<Input {...register("skill")} placeholder="Skills require" />
 				</div>
 				<div className="flex flex-col gap-2 w-full">
-					<label>Agent</label>
-					<section className="flex border-1 border-[#0039C8] rounded-xl mx-auto min-w-full overflow-hidden">
-						<div className="flex-1">
+					<p>Agent</p>
+					<section className="flex border-1 border-[#0039C8] rounded-xl mx-auto min-w-full min-h-[800px] max-h-[800px] overflow-hidden">
+						<div className="flex-1 overflow-scroll">
 							{agents.map((agent: Agent, index: number) => (
-								<div onClick={() => setCurrentAgent(index)} key={index}>
+								<div
+									onClick={() => setCurrentAgent(index)}
+									key={index}
+									className="cursor-pointer"
+								>
 									<AgentOverview
 										agent={agent}
 										active={index === currentAgent}

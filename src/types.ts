@@ -29,6 +29,7 @@ export interface Job {
 }
 
 export interface Agent {
+	id: number;
 	name: string;
 	avatar: string;
 	rate: number;
@@ -39,4 +40,12 @@ export interface Agent {
 	api: string;
 	price: number;
 	creator?: string;
+}
+
+export interface User {
+	id: string;
+	name: string;
+	avatar: string;
+	rate: number;
+	description: string;
 }

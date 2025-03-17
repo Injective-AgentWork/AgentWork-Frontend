@@ -1,6 +1,8 @@
+import { AgentDetail } from "@/components/AgentDetail";
 import { Tag } from "@/components/Tag";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Job } from "@/types";
 import { HandCoins } from "lucide-react";
@@ -20,7 +22,7 @@ export const JobDetailPage = () => {
 
 	useEffect(() => {
 		const fetchJob = async () => {
-			const res = await fetch("http://140.245.117.232:8000/invoke", {
+			const res = await fetch("https://agentwork.space:8000/invoke", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -38,7 +40,7 @@ export const JobDetailPage = () => {
 		if (job.status === "active") {
 			fetchJob();
 		}
-	}, [id, job]);
+	}, []);
 
 	useEffect(() => {
 		if (job.status === "active") {
@@ -97,7 +99,7 @@ export const JobDetailPage = () => {
 					);
 				})}
 			</div>
-			<div className="flex min-w-[1000px] max-w-[1000px] text-white min-h-1/2 max-h-1/2 border border-[#0039C8] rounded-lg overflow-hidden">
+			<div className="flex min-w-[1000px] max-w-[1000px] text-white min-h-1/2 h-1/2 max-h-1/2 border border-[#0039C8] rounded-lg overflow-hidden">
 				<div className="flex-1 min-h-full max-h-full shrink-0 bg-[#0039C8] p-4 flex flex-col gap-4">
 					<div className="flex justify-between items-center">
 						<h3 className="text-2xl">{job.title}</h3>
@@ -109,7 +111,7 @@ export const JobDetailPage = () => {
 									: "Cancelled"}
 						</p>
 					</div>
-					<Tabs defaultValue="details" className="w-full">
+					<Tabs defaultValue="details" className="w-full h-full">
 						<TabsList className="w-full bg-transparent text-white">
 							<TabsTrigger value="details">Details</TabsTrigger>
 							<TabsTrigger value="contract">Contract</TabsTrigger>
@@ -133,8 +135,48 @@ export const JobDetailPage = () => {
 								})}
 							</div>
 						</TabsContent>
-						<TabsContent value="contract"></TabsContent>
-						<TabsContent value="team"></TabsContent>
+						<TabsContent value="contract" className="overflow-scroll">
+							<div className="flex flex-col gap-2">
+								<h2 className="text-2xl">AI Agent Work Agreement</h2>
+								<p>
+									This agreement is entered between the Job Poster and the AI
+									Agent owner. The Agent will complete the assigned task
+									according to the specifications and timeline provided in the
+									job description.
+								</p>
+								<p>
+									Payment will be processed only upon satisfactory completion
+									and approval of deliverables. The Job Poster retains all
+									intellectual property rights to the completed work.
+								</p>
+								<p>
+									The AI Agent owner guarantees the security and confidentiality
+									of all data provided. Either party may terminate this
+									agreement with 24-hour notice if requirements are not met.
+								</p>
+								<p>
+									All dispute resolutions will be handled through the platform's
+									arbitration system. This agreement is governed by applicable
+									digital service laws.
+								</p>
+							</div>
+						</TabsContent>
+						<TabsContent value="team">
+							<div className="flex flex-col gap-2">
+								{job.agents.map((agent) => {
+									return (
+										<div key={agent.name} className="flex gap-2 items-center">
+											<img
+												src={agent.avatar}
+												alt={agent.name}
+												className="w-10 h-10 rounded-full"
+											/>
+											<p>{agent.name}</p>
+										</div>
+									);
+								})}
+							</div>
+						</TabsContent>
 						<TabsContent value="output">
 							{isCompleted ? (
 								<div className="flex flex-col gap-2">
@@ -165,16 +207,16 @@ export const JobDetailPage = () => {
 						)}
 					</div>
 				</div>
-				<div className="shrink-0 flex-1 p-4 max-h-full overflow-scroll text-black">
+				<div className="flex flex-col shrink-0 flex-1 p-4 min-h-full h-full max-h-full overflow-scroll text-black">
 					<h3
-						className="text-[#0038C9] mb-4 sticky top-0 py-2 rounded-full px-4"
+						className="text-[#0038C9] mb-4 py-2 rounded-full px-4"
 						style={{
 							backdropFilter: "blur(10px)",
 						}}
 					>
 						Agents
 					</h3>
-					<div className="w-full">
+					<div className="flex flex-col grow w-full h-full">
 						<div className="flex gap-2 items-center mb-2">
 							<img
 								src="https://placehold.co/100x100"
@@ -187,27 +229,33 @@ export const JobDetailPage = () => {
 									: "Your job has been completed!"}
 							</p>
 						</div>
-						<div className="flex flex-col gap-2 max-w-full text-wrap overflow-hidden">
-							{messages.map((message) => {
-								return (
-									<div
-										key={message.content}
-										className="flex gap-2 items-center"
-									>
-										<img
-											src="https://placehold.co/100x100"
-											alt="agent"
-											className="w-10 h-10 rounded-full"
-										/>
-										<p
+						<div className="flex flex-col gap-2 grow">
+							<div className="flex flex-col gap-2 grow max-w-full text-wrap overflow-hidden">
+								{messages.map((message) => {
+									return (
+										<div
 											key={message.content}
-											className="whitespace-wrap max-w-full"
+											className="flex gap-2 items-center"
 										>
-											{message.content}
-										</p>
-									</div>
-								);
-							})}
+											<img
+												src="https://placehold.co/100x100"
+												alt="agent"
+												className="w-10 h-10 rounded-full"
+											/>
+											<p
+												key={message.content}
+												className="whitespace-wrap max-w-full"
+											>
+												{message.content}
+											</p>
+										</div>
+									);
+								})}
+							</div>
+							<div className="flex gap-2">
+								<Input placeholder="Message" />
+								<Button>Send</Button>
+							</div>
 						</div>
 					</div>
 				</div>
