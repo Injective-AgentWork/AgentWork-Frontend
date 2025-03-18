@@ -101,7 +101,7 @@ export const JobDetailPage = () => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				id: "1",
+				id: job.id.toString(),
 				request: message,
 				id_thread: job.id.toString(),
 			}),

@@ -17,7 +17,11 @@ export const MyJobPage = () => {
 				{jobs
 					.filter((job: Job) => job.creator === injectiveAddress)
 					.map((job: Job, i: number) => (
-						<div key={job.id} onClick={() => setSelectedJob(i)}>
+						<div
+							key={job.id}
+							onClick={() => setSelectedJob(i)}
+							className="cursor-pointer"
+						>
 							<JobOverview
 								active={i === selectedJob}
 								key={job.id}

@@ -26,6 +26,7 @@ export interface Job {
 	creator?: string;
 	status: "active" | "completed" | "cancelled";
 	agents: Agent[];
+	output?: string;
 }
 
 export interface Agent {

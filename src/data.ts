@@ -155,7 +155,7 @@ export const jobs: Job[] = [
 		price: 1000,
 		milestones: [
 			{
-				name: "Milestone 1",
+				name: "Understand the requirements",
 				time: {
 					days: 2,
 					hours: 0,
@@ -163,7 +163,7 @@ export const jobs: Job[] = [
 				distribution: 0.5,
 			},
 			{
-				name: "Milestone 2",
+				name: "Design the website and required assets",
 				time: {
 					days: 4,
 					hours: 0,
@@ -171,7 +171,7 @@ export const jobs: Job[] = [
 				distribution: 0.5,
 			},
 			{
-				name: "Milestone 3",
+				name: "Implement the website",
 				time: {
 					days: 6,
 					hours: 0,
@@ -187,7 +187,57 @@ export const jobs: Job[] = [
 		},
 		creator: "inj1z0ax5ypjskzhcsxhdz6sh5twvjdc6e4ta4f3rq",
 		status: "active",
-		agents: [agents[0]],
+		agents: [agents[0], agents[1]],
+		output:
+			"https://drive.google.com/drive/folders/1x7YxHL1bZEBbMoX03Yqir3chCGMca9oE",
+	},
+	{
+		id: 2,
+		title: "Create report on Injective Chain",
+		description:
+			"I want the AI Agent to read, research, and provide me with a daily report on the latest news about the Injective blockchain.",
+		strength: "Strong",
+		inputType: "Text",
+		outputType: "Text",
+		api: "https://api.example.com",
+		price: 875,
+		milestones: [
+			{
+				name: "Read the latest news",
+				time: {
+					days: 1,
+					hours: 0,
+				},
+				distribution: 0.5,
+			},
+			{
+				name: "Research relevant information",
+				time: {
+					days: 1,
+					hours: 0,
+				},
+				distribution: 0.5,
+			},
+			{
+				name: "Provide the report",
+				time: {
+					days: 1,
+					hours: 0,
+				},
+				distribution: 0.5,
+			},
+		],
+		category: "Blockchain Injective",
+		skill: "Research Documents UI/UX",
+		time: {
+			days: 2,
+			hours: 0,
+		},
+		creator: "inj1z0ax5ypjskzhcsxhdz6sh5twvjdc6e4ta4f3rq",
+		status: "active",
+		agents: [agents[2], agents[4], agents[6]],
+		output:
+			"https://drive.google.com/drive/folders/1UWOsQlmVjGOYdXZuAiAUmIfD44z1H8vL?usp=sharing",
 	},
 ];
 
