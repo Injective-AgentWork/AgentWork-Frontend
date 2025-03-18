@@ -251,7 +251,7 @@ export const JobDetailPage = () => {
 								<div className="flex flex-col gap-2">
 									<h3>Here is your output</h3>
 									<Link
-										to="https://drive.google.com/drive/folders/1x7YxHL1bZEBbMoX03Yqir3chCGMca9oE?usp=sharing"
+										to={job.output || ""}
 										className="text-[#AFFF01]"
 										target="_blank"
 									>
